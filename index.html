@@ -293,16 +293,16 @@ const SHOP = {
 // 外送規則
 //==============================
 const RULES=[
-    {max:1000,cup:5,money:300,vehicle:"機車"},
-    {max:2000,cup:8,money:500,vehicle:"機車"},
-    {max:3000,cup:12,money:750,vehicle:"機車"},
-    {max:4000,cup:15,money:1000,vehicle:"機車"},
-    {max:5000,cup:20,money:1300,vehicle:"機車"},
-    {max:6000,cup:25,money:1650,vehicle:"汽車"},
-    {max:7000,cup:30,money:1950,vehicle:"汽車"},
-    {max:8000,cup:38,money:2450,vehicle:"汽車"},
-    {max:9000,cup:45,money:2900,vehicle:"汽車"},
-    {max:10000,cup:55,money:3600,vehicle:"汽車"}
+    {max:1000,cup:5,money:300},
+    {max:2000,cup:8,money:500},
+    {max:3000,cup:12,money:750},
+    {max:4000,cup:15,money:1000},
+    {max:5000,cup:20,money:1300},
+    {max:6000,cup:25,money:1650},
+    {max:7000,cup:30,money:1950},
+    {max:8000,cup:38,money:2450},
+    {max:9000,cup:45,money:2900},
+    {max:10000,cup:55,money:3600}
 ];
 //==============================
 // LIFF 初始化
@@ -334,6 +334,9 @@ function getRule(distance){
     }
     return null;
 }
+function needCar(distance, rule) {
+    return distance > 5000 || (rule && rule.cup >= 30);
+}	
 //==============================
 // 建立距離表
 //==============================
@@ -505,18 +508,20 @@ async function reverseGeocode(
 //==============================
 function showResult(
     address,
-    distance,
-    vehicle
+    distance
 ){
     const rule=getRule(distance);
+	const finalVehicle = needCar(distance, rule) ? "汽車" : "機車";
     document.getElementById("result").style.display="block";
     document.getElementById("address").textContent=
         address;
     document.getElementById("distance").textContent=
         (distance/1000).toFixed(2)+" km";
     if(rule){
-        document.getElementById("vehicle").textContent=
-    vehicle;
+        document.getElementById("vehicle").textContent =
+    finalVehicle === "汽車"
+        ? "🚗 豪華專車外送"
+        : "🛵 gogoro外送";
         document.getElementById("minimum").textContent=
             `${rule.cup} 杯 或 $${rule.money}`;
     }
@@ -579,22 +584,23 @@ async function startLocation(){
 			console.log("Address:", address);
 			console.log("Google Place:", place);
 			
-			let vehicle = "機車";
-			
-			// 用 Google 官方座標算距離
-			let distance =await getRoadDistance(place.lat,place.lng,"TWO_WHEELER");
-
-// 超過 5 公里改用汽車重新計算
-if(distance > 5000)
-{
-	distance =await getRoadDistance(place.lat,place.lng,"DRIVE");
-    vehicle = "汽車";
-}
+		let vehicle = "機車";
+		
+		// 用機車先計算距離
+		let distance = await getRoadDistance(place.lat, place.lng, "TWO_WHEELER");
+		
+		// 先取得目前門檻
+		let rule = getRule(distance);
+		
+		// 超過 5 公里 或 30 杯以上，改用汽車重新計算
+		if (needCar(distance, rule)) {
+		    distance = await getRoadDistance(place.lat, place.lng, "DRIVE");
+		    vehicle = "汽車";
+		}
 
 showResult(
     address,
-    distance,
-    vehicle
+    distance
 );
             }
             catch(e){
@@ -638,32 +644,33 @@ loading(true);
 
 		const place = await geocodeAddress(keyword);
 
-        let vehicle = "機車";
-
-        let distance =
-            await getRoadDistance(
-                place.lat,
-                place.lng,
-                "TWO_WHEELER"
-            );
-
-        if(distance > 5000){
-
-            distance =
-                await getRoadDistance(
-                    place.lat,
-                    place.lng,
-                    "DRIVE"
-                );
-
-            vehicle="汽車";
-
-        }
+		let vehicle = "機車";
+		
+		// 用機車先計算距離
+		let distance = await getRoadDistance(
+		    place.lat,
+		    place.lng,
+		    "TWO_WHEELER"
+		);
+		
+		// 先取得目前門檻
+		let rule = getRule(distance);
+		
+		// 超過 5 公里 或 30 杯以上，改用汽車重新計算
+		if (needCar(distance, rule)) {
+		
+		    distance = await getRoadDistance(
+		        place.lat,
+		        place.lng,
+		        "DRIVE"
+		    );
+		
+		    vehicle = "汽車";
+		}
 
         showResult(
             place.address,
-            distance,
-            vehicle
+            distance
         );
 
     }catch(e){
