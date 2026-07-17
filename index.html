@@ -177,6 +177,7 @@ button:disabled{
             }
         }
     </style>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPtYdWKJtn3prltPDlMayZJBylyYgOJwY&libraries=places"></script>
 </head>
 <body>
 <div class="card">
@@ -211,7 +212,7 @@ button:disabled{
     <div id="addressBox" style="display:none;">
 
         <input
-            id="addressInput"
+            id="autocomplete"
             type="text"
             placeholder="例如：中壢SOGO、A18高鐵站">
 
@@ -461,31 +462,19 @@ async function reverseGeocode(
 //==============================
 // 地址 -> 經緯度
 //==============================
-async function geocodeAddress(keyword){
+let selectedPlace=null;
+window.addEventListener("load",()=>{
+ const input=document.getElementById("autocomplete");
+ if(!input||!window.google)return;
+ const ac=new google.maps.places.Autocomplete(input,{fields:["geometry","formatted_address"],componentRestrictions:{country:"tw"}});
+ ac.addListener("place_changed",()=>{
+   const p=ac.getPlace();
+   if(p.geometry){
+     selectedPlace={lat:p.geometry.location.lat(),lng:p.geometry.location.lng(),address:p.formatted_address};
+   }
+ });
+});
 
-    const res = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(keyword)}&language=zh-TW&key=${GOOGLE_API_KEY}`
-    );
-
-    const json = await res.json();
-
-    if(json.status !== "OK"){
-
-        throw new Error("找不到地址");
-
-    }
-
-    return{
-
-        lat: json.results[0].geometry.location.lat,
-
-        lng: json.results[0].geometry.location.lng,
-
-        address: json.results[0].formatted_address
-
-    };
-
-}      
 //==============================
 // 顯示結果
 //==============================
@@ -627,8 +616,8 @@ showResult(
 
         }
 
-        const place =
-            await geocodeAddress(keyword);
+        if(!selectedPlace){throw new Error("請從下拉選單選擇地址");}
+        const place=selectedPlace;
 
         let vehicle = "機車";
 
