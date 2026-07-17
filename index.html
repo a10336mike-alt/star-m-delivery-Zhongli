@@ -560,12 +560,17 @@ function showResult(
     buildTable(distance);
 
     // ⭐ 新增這段
-    setTimeout(() => {
-        document.getElementById("result").scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }, 100);
+setTimeout(() => {
+    const result = document.getElementById("result");
+
+    const targetTop =
+        result.getBoundingClientRect().top +
+        window.pageYOffset -
+        20;
+
+    window.scrollTo(0, targetTop);
+}, 300);
+	
 }
 //==============================
 // API Key 檢查
