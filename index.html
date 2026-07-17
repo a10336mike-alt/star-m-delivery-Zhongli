@@ -1,97 +1,491 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星M 外送試算</title>
-    <!-- 引入 LINE LIFF SDK -->
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfdfb; color: #2c4c38; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .card { background: white; border-radius: 16px; padding: 30px; max-width: 400px; width: 100%; box-shadow: 0 10px 25px rgba(35,67,48,0.08); text-align: center; border: 1px solid #e1e8e4; }
-        h2 { margin-top: 0; color: #234330; font-size: 24px; }
-        p { font-size: 16px; line-height: 1.5; color: #53705e; }
-        .btn { background: #df6c4f; color: white; border: none; padding: 14px 28px; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; transition: 0.2s; width: 100%; margin-top: 15px; }
-        .btn:active { transform: scale(0.98); background: #c95c41; }
-        .result { margin-top: 25px; padding: 15px; border-radius: 8px; background: #f4f6f2; display: none; text-align: left; border: 1px dashed #c1d0c7; }
-        .result h3 { margin: 0 0 8px 0; color: #234330; font-size: 18px; }
-        .highlight { color: #df6c4f; font-weight: bold; }
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0">
+<title>星M 外送門檻試算</title>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+body{
+    background:#f5f5f5;
+    font-family:
+    "Microsoft JhengHei",
+    sans-serif;
+    padding:20px;
+}
+.card{
+    max-width:560px;
+    margin:auto;
+    background:white;
+    border-radius:18px;
+    box-shadow:
+    0 8px 25px
+    rgba(0,0,0,.1);
+    padding:30px;
+}
+h1{
+    text-align:center;
+    color:#00897b;
+    margin-bottom:10px;
+}
+.sub{
+    text-align:center;
+    color:#666;
+    margin-bottom:25px;
+    line-height:1.8;
+}
+button{
+    width:100%;
+    border:0;
+    border-radius:12px;
+    padding:18px;
+    font-size:20px;
+    font-weight:bold;
+    color:white;
+    background:#00a884;
+    cursor:pointer;
+}
+button:hover{
+    background:#00916f;
+}
+button:disabled{
+    background:#bdbdbd;
+}
+#loading{
+    display:none;
+    text-align:center;
+    margin-top:20px;
+    color:#ff9800;
+    font-size:18px;
+}
+#result{
+    display:none;
+    margin-top:25px;
+    background:#f7fafc;
+    border-radius:12px;
+    padding:20px;
+}
+.item{
+    margin-bottom:18px;
+    line-height:1.8;
+}
+.label{
+    color:#666;
+}
+.value{
+    font-size:22px;
+    font-weight:bold;
+    color:#e65100;
+}
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:20px;
+        }
+        th{
+            background:#00a884;
+            color:white;
+            padding:12px;
+            font-size:16px;
+        }
+        td{
+            border-bottom:1px solid #e0e0e0;
+            padding:12px;
+            text-align:center;
+            font-size:15px;
+        }
+        tr.active{
+            background:#fff3cd;
+            font-weight:bold;
+        }
+        .notice{
+            color:#d32f2f;
+            font-weight:bold;
+        }
+        @media(max-width:600px){
+            .card{
+                padding:20px;
+            }
+            h1{
+                font-size:26px;
+            }
+            button{
+                font-size:18px;
+                padding:16px;
+            }
+            .value{
+                font-size:20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h2>🛵 外送距離試算</h2>
-        <p>請點選下方按鈕，我們將快速為您估算外送杯數標準。</p>
-        <button class="btn" onclick="startLocation()">📍 點我試算 !</button>
-        
-        <div id="resultBox" class="result">
-            <h3>試算結果：</h3>
-            <p>與店面距離：<span id="distVal" class="highlight">-</span> 公里</p>
-            <p>外送標準：<span id="standardVal" class="highlight">-</span></p>
-            <!-- 傳送按鈕 -->
-            <button id="sendBtn" class="btn" style="background:#234330; display:none;" onclick="sendToChat()">💬 回傳到聊天室</button>
-        </div>
+<div class="card">
+    <h1>🧋 星M 外送門檻試算</h1>
+    <div class="sub">
+        依照您的 GPS 定位<br>
+        使用 Google 道路距離計算外送門檻
     </div>
+    <button
+        id="calcBtn"
+        onclick="startLocation()">
+        📍 開始試算外送門檻
+    </button>
+    <div id="loading">
+        📍 正在取得定位...
+    </div>
+    <div id="result">
+        <div class="item">
+            <div class="label">
+                您的位置
+            </div>
+            <div
+                id="address"
+                class="value">
+                -
+            </div>
+        </div>
+        <div class="item">
+            <div class="label">
+                道路距離
+            </div>
+            <div
+                id="distance"
+                class="value">
+                -
+            </div>
+        </div>
+        <div class="item">
+            <div class="label">
+                配送方式
+            </div>
+            <div
+                id="vehicle"
+                class="value">
+                -
+            </div>
+        </div>
+        <div class="item">
+            <div class="label">
+                外送門檻
+            </div>
+            <div
+                id="minimum"
+                class="value">
+                -
+            </div>
+        </div>
+        <table id="ruleTable">
+            <thead>
+                <tr>
+                    <th>道路距離</th>
+                    <th>外送門檻</th>
+                </tr>
+            </thead>
+            <tbody id="ruleBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+//==============================
+// 基本設定
+//==============================
+const LIFF_ID = "2010743612-VDzR3yaa";
+const GOOGLE_API_KEY = "AIzaSyCPtYdWKJtn3prltPDlMayZJBylyYgOJwY";
+const SHOP = {
+    lat:24.963070,
+    lng:121.225820
+};
+//==============================
+// 外送規則
+//==============================
+const RULES=[
+    {max:1000,cup:5,money:300,vehicle:"機車"},
+    {max:2000,cup:8,money:500,vehicle:"機車"},
+    {max:3000,cup:12,money:750,vehicle:"機車"},
+    {max:4000,cup:15,money:1000,vehicle:"機車"},
+    {max:5000,cup:20,money:1300,vehicle:"機車"},
+    {max:6000,cup:25,money:1650,vehicle:"汽車"},
+    {max:7000,cup:30,money:1950,vehicle:"汽車"},
+    {max:8000,cup:38,money:2450,vehicle:"汽車"},
+    {max:9000,cup:45,money:2900,vehicle:"汽車"},
+    {max:10000,cup:55,money:3600,vehicle:"汽車"}
+];
+//==============================
+// LIFF 初始化
+//==============================
+window.onload=async()=>{
+    try{
+        await liff.init({
+            liffId:LIFF_ID
+        });
+    }
+    catch(e){
+        console.log(e);
+    }
+};
+//==============================
+// Loading
+//==============================
+function loading(show){
+    document.getElementById("loading").style.display=
+        show?"block":"none";
+    document.getElementById("calcBtn").disabled=show;
+}
+//==============================
+// 取得目前門檻
+//==============================
+function getRule(distance){
+    for(const r of RULES){
+        if(distance<=r.max){
+            return r;
+        }
+    }
+    return null;
+}
+//==============================
+// 建立距離表
+//==============================
+function buildTable(distance){
+    const body=document.getElementById("ruleBody");
+    body.innerHTML="";
+    let selected=false;
+    RULES.forEach(rule=>{
+        const tr=document.createElement("tr");
+        if(!selected && distance<=rule.max){
+            tr.className="active";
+            selected=true;
+        }
+        tr.innerHTML=`
+        <td>
+            ${rule.max/1000} km
+        </td>
+        <td>
+            ${rule.cup} 杯 / $${rule.money}
+        </td>
+        `;
+        body.appendChild(tr);
+    });
+    if(distance>10000){
+        const tr=document.createElement("tr");
+        tr.className="active";
+        tr.innerHTML=`
+        <td>
+            超過 10 km
+        </td>
+        <td class="notice">
+            請來電詢問
+        </td>
+        `;
+        body.appendChild(tr);
+    }
+}
 
-    <script>
-        // === 🔧 設定區（請務必填入您的 LIFF ID） ===
-        const MY_LIFF_ID = "2010743612-VDzR3yaa"; 
-        const STORE_LAT = 24.96307; // 店家經緯度
-        const STORE_LNG = 121.22582;
-        // ======================================
-
-        let finalMessage = "";
-
-        // 初始化 LIFF
-        liff.init({ liffId: MY_LIFF_ID })
-            .then(() => { console.log("LIFF 初始化成功"); });
-
-        // 啟動定位
-        function startLocation() {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const dist = getDistance(STORE_LAT, STORE_LNG, position.coords.latitude, position.coords.longitude);
-                    showResult(dist);
+//==============================
+// Google Routes API
+//==============================
+async function getRoadDistance(
+    userLat,
+    userLng,
+    travelMode="TWO_WHEELER"
+){
+    const response=
+        await fetch(
+            "https://routes.googleapis.com/directions/v2:computeRoutes",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json",
+                    "X-Goog-Api-Key":GOOGLE_API_KEY,
+                    "X-Goog-FieldMask":"routes.distanceMeters"
                 },
-                () => { alert("定位失敗，請確保權限已開啟。"); },
-                { enableHighAccuracy: true }
-            );
-        }
+                body:JSON.stringify({
+                    origin:{
+                        location:{
+                            latLng:{
+                                latitude:userLat,
+                                longitude:userLng
+                            }
+                        }
+                    },
+                    destination:{
+                        location:{
+                            latLng:{
+                                latitude:SHOP.lat,
+                                longitude:SHOP.lng
+                            }
+                        }
+                    },
+                    travelMode:travelMode
+                })
+            }
+        );
+    if(!response.ok){
+        throw new Error(
+            "Routes API Error"
+        );
+    }
+    const json=
+        await response.json();
+    if(
+        !json.routes ||
+        json.routes.length===0
+    ){
+        throw new Error(
+            "No Route"
+        );
+    }
+    return json.routes[0].distanceMeters;
+}
+//==============================
+// 反向地理編碼
+//==============================
+async function reverseGeocode(
+    lat,
+    lng
+){
+    const response=
+        await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&language=zh-TW&key=${GOOGLE_API_KEY}`
+        );
+    if(!response.ok){
+        return "未知位置";
+    }
+    const json=
+        await response.json();
+    if(
+        json.results &&
+        json.results.length>0
+    ){
+        return json.results[0].formatted_address;
+    }
+    return "未知位置";
+}
+//==============================
+// 顯示結果
+//==============================
+function showResult(
+    address,
+    distance,
+    vehicle
+){
+    const rule=getRule(distance);
+    document.getElementById("result").style.display="block";
+    document.getElementById("address").textContent=
+        address;
+    document.getElementById("distance").textContent=
+        (distance/1000).toFixed(2)+" km";
+    if(rule){
+        document.getElementById("vehicle").textContent=
+    vehicle;
+        document.getElementById("minimum").textContent=
+            `${rule.cup} 杯 或 $${rule.money}`;
+    }
+    else{
+        document.getElementById("vehicle").textContent=
+            "-";
+        document.getElementById("minimum").textContent=
+            "請來電詢問";
+    }
+    buildTable(distance);
+}
+//==============================
+// API Key 檢查
+//==============================
+function checkConfig(){
+    if(
+        GOOGLE_API_KEY==="YOUR_GOOGLE_API_KEY"
+    ){
+        alert("請先設定 Google API Key");
+        return false;
+    }
+    if(
+        LIFF_ID==="YOUR_LIFF_ID"
+    ){
+        alert("請先設定 LIFF ID");
+        return false;
+    }
+    return true;
+}
+//==============================
+// 重新包裝入口
+//==============================
+async function startLocation(){
+    if(!checkConfig()){
+        return;
+    }
+    if(!navigator.geolocation){
+        alert("瀏覽器不支援定位");
+        return;
+    }
+    loading(true);
+    navigator.geolocation.getCurrentPosition(
+        async(position)=>{
+            try{
+                const lat=
+                    position.coords.latitude;
+                const lng=
+                    position.coords.longitude;
+                const address=
+                    await reverseGeocode(
+                        lat,
+                        lng
+                    );
+                let vehicle = "機車";
 
-        // 計算距離公式
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2-lat1) * Math.PI/180;
-            const dLon = (lon2-lon1) * Math.PI/180;
-            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-            return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1);
-        }
+let distance =
+    await getRoadDistance(
+        lat,
+        lng,
+        "TWO_WHEELER"
+    );
 
-        // 顯示結果
-        function showResult(dist) {
-            document.getElementById("resultBox").style.display = "block";
-            document.getElementById("distVal").innerText = dist;
-            
-            let ruleText = "";
-            if (dist <= 1.0) ruleText = "滿 5 杯外送";
-            else if (dist <= 3.0) ruleText = "滿 8 杯外送";
-            else ruleText = "超出範圍，請來電詢問";
-            
-            document.getElementById("standardVal").innerText = ruleText;
-            finalMessage = `🎯 外送試算：距離 ${dist} 公里，符合【${ruleText}】。`;
-            
-            if (liff.isInClient()) document.getElementById("sendBtn").style.display = "block";
-        }
+// 超過 5 公里改用汽車重新計算
+if(distance > 5000){
 
-        // 關鍵：將結果傳送並觸發自動回應 (傳送兩則訊息)
-        function sendToChat() {
-            liff.sendMessages([
-                { type: 'text', text: finalMessage }, // 第一則：試算結果
-                { type: 'text', text: "確認外送標準" }   // 第二則：觸發 LINE OA 自動回應的關鍵字
-            ])
-            .then(() => { liff.closeWindow(); })
-            .catch((err) => { alert("傳送失敗：" + err); });
+    distance =
+        await getRoadDistance(
+            lat,
+            lng,
+            "DRIVE"
+        );
+
+    vehicle = "汽車";
+}
+
+showResult(
+    address,
+    distance,
+    vehicle
+);
+            }
+            catch(e){
+                console.error(e);
+                alert(
+                    "Google Routes API 呼叫失敗"
+                );
+            }
+            loading(false);
+        },
+        (err)=>{
+            console.error(err);
+            loading(false);
+            alert("定位失敗");
+        },
+        {
+            enableHighAccuracy:true,
+            timeout:15000,
+            maximumAge:0
         }
-    </script>
+    );
+}
+</script>
 </body>
 </html>
