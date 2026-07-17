@@ -557,34 +557,25 @@ async function startLocation(){
     navigator.geolocation.getCurrentPosition(
         async(position)=>{
             try{
-                const lat=
-                    position.coords.latitude;
-                const lng=
-                    position.coords.longitude;
-                const address=
-                    await reverseGeocode(
-                        lat,
-                        lng
-                    );
-                let vehicle = "機車";
 
-let distance =
-    await getRoadDistance(
-        lat,
-        lng,
-        "TWO_WHEELER"
-    );
+			const lat = position.coords.latitude;
+			const lng = position.coords.longitude;
+			
+			// GPS → 地址
+			const address = await reverseGeocode(lat, lng);
+			
+			// 地址 → Google 官方座標
+			const place = await geocodeAddress(address);
+			
+			let vehicle = "機車";
+			
+			// 用 Google 官方座標算距離
+			let distance =await getRoadDistance(place.lat,place.lng,"TWO_WHEELER");
 
 // 超過 5 公里改用汽車重新計算
-if(distance > 5000){
-
-    distance =
-        await getRoadDistance(
-            lat,
-            lng,
-            "DRIVE"
-        );
-
+if(distance > 5000)
+{
+	distance =await getRoadDistance(place.lat,place.lng,"DRIVE");
     vehicle = "汽車";
 }
 
