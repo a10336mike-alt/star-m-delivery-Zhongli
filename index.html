@@ -459,6 +459,34 @@ async function reverseGeocode(
     return "未知位置";
 }
 //==============================
+// 地址 -> 經緯度
+//==============================
+async function geocodeAddress(keyword){
+
+    const res = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(keyword)}&language=zh-TW&key=${GOOGLE_API_KEY}`
+    );
+
+    const json = await res.json();
+
+    if(json.status !== "OK"){
+
+        throw new Error("找不到地址");
+
+    }
+
+    return{
+
+        lat: json.results[0].geometry.location.lat,
+
+        lng: json.results[0].geometry.location.lng,
+
+        address: json.results[0].formatted_address
+
+    };
+
+}      
+//==============================
 // 顯示結果
 //==============================
 function showResult(
@@ -582,7 +610,61 @@ showResult(
 
 }else{
 
-    alert("地址模式");
+    try{
+
+        const keyword = document
+            .getElementById("addressInput")
+            .value
+            .trim();
+
+        if(keyword===""){
+
+            alert("請輸入地址或地標");
+
+            loading(false);
+
+            return;
+
+        }
+
+        const place =
+            await geocodeAddress(keyword);
+
+        let vehicle = "機車";
+
+        let distance =
+            await getRoadDistance(
+                place.lat,
+                place.lng,
+                "TWO_WHEELER"
+            );
+
+        if(distance > 5000){
+
+            distance =
+                await getRoadDistance(
+                    place.lat,
+                    place.lng,
+                    "DRIVE"
+                );
+
+            vehicle="汽車";
+
+        }
+
+        showResult(
+            place.address,
+            distance,
+            vehicle
+        );
+
+    }catch(e){
+
+        console.error(e);
+
+        alert("找不到該地址");
+
+    }
 
     loading(false);
 
