@@ -40,6 +40,59 @@ h1{
     margin-bottom:25px;
     line-height:1.8;
 }
+.mode-box{
+
+    background:#fff;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    margin-bottom:15px;
+
+    text-align:left;
+
+}
+
+.mode-title{
+
+    font-weight:bold;
+
+    margin-bottom:12px;
+
+    font-size:18px;
+
+}
+
+.radio-item{
+
+    display:block;
+
+    margin:10px 0;
+
+}
+
+#addressBox{
+
+    margin-top:15px;
+
+}
+
+#addressInput{
+
+    width:100%;
+
+    padding:12px;
+
+    font-size:16px;
+
+    border:1px solid #ccc;
+
+    border-radius:8px;
+
+    box-sizing:border-box;
+
+}      
 button{
     width:100%;
     border:0;
@@ -132,6 +185,39 @@ button:disabled{
         依照您的 GPS 定位<br>
         使用 Google 道路距離計算外送門檻
     </div>
+      <div class="mode-box">
+
+    <div class="mode-title">
+        📍 選擇查詢方式
+    </div>
+
+    <label class="radio-item">
+        <input
+            type="radio"
+            name="mode"
+            value="gps"
+            checked>
+        使用目前位置（GPS）
+    </label>
+
+    <label class="radio-item">
+        <input
+            type="radio"
+            name="mode"
+            value="address">
+        輸入地址／地標
+    </label>
+
+    <div id="addressBox" style="display:none;">
+
+        <input
+            id="addressInput"
+            type="text"
+            placeholder="例如：中壢SOGO、A18高鐵站">
+
+    </div>
+
+</div>
     <button
         id="calcBtn"
         onclick="startLocation()">
@@ -265,12 +351,12 @@ function buildTable(distance){
         }
         tr.innerHTML=`
         <td>
-    ${
-        rule.max === 1000
-        ? "0.0~1.0 km"
-        : `${((rule.max - 900) / 1000).toFixed(1)}~${(rule.max / 1000).toFixed(1)} km`
-    }
-</td>
+          ${
+              rule.max === 1000
+              ? "0.0～1.0 km"
+              : `>${((rule.max - 1000) / 1000).toFixed(1)}～${(rule.max / 1000).toFixed(1)} km`
+           }
+      </td>
         <td>
             ${rule.cup} 杯 / $${rule.money}
         </td>
