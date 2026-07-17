@@ -340,7 +340,9 @@ window.onload=async()=>{
     }
 
 });
-
+document.getElementById("addressInput").addEventListener("input", () => {
+    selectedPlace = null;
+});
     }
     catch(e){
         console.log(e);
@@ -612,7 +614,7 @@ showResult(
     );
 
 }else{
-
+loading(true);
     try{
 
         const keyword = document
@@ -687,6 +689,10 @@ document
 
         const box = document.getElementById("addressBox");
 
+
+		selectedPlace = null;
+		document.getElementById("addressInput").value = "";
+		
         if(this.value === "address"){
 
             box.style.display = "block";
