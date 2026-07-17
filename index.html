@@ -440,7 +440,11 @@ async function geocodeAddress(address){
     const response=await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&language=zh-TW&key=${GOOGLE_API_KEY}`);
     if(!response.ok) throw new Error("Geocode Error");
     const json=await response.json();
-    if(json.status!=="OK"||!json.results.length) throw new Error("Address Not Found");
+    console.log(json);
+
+if(json.status !== "OK" || !json.results.length){
+    throw new Error(json.status);
+	
     return {
         lat:json.results[0].geometry.location.lat,
         lng:json.results[0].geometry.location.lng,
