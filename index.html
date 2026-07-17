@@ -508,7 +508,11 @@ function checkConfig(){
 // 重新包裝入口
 //==============================
 async function startLocation(){
-    if(!checkConfig()){
+      const mode = document.querySelector(
+          "input[name='mode']:checked"
+      ).value;
+    if(mode === "gps"){
+      if(!checkConfig()){
         return;
     }
     if(!navigator.geolocation){
@@ -575,6 +579,15 @@ showResult(
             maximumAge:0
         }
     );
+
+}else{
+
+    alert("地址模式");
+
+    loading(false);
+
+}
+
 }
 document
 .querySelectorAll("input[name='mode']")
