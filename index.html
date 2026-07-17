@@ -3,254 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>星M 中壢海華店 - 外送距離快速計算器</title>
+    <title>星M 外送試算</title>
     <!-- 引入 LINE LIFF SDK -->
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #0d0d0d;
-            color: #f5f5f5;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 16px;
-            box-sizing: border-box;
-        }
-        .card {
-            background-color: #1a1a1a;
-            border: 1px solid #dfb86c;
-            border-radius: 16px;
-            padding: 24px;
-            max-width: 420px;
-            width: 100%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            box-sizing: border-box;
-        }
-        .header {
-            margin-bottom: 20px;
-        }
-        .brand-logo {
-            font-size: 28px;
-            font-weight: 900;
-            color: #dfb86c;
-            letter-spacing: 2px;
-            margin: 0;
-        }
-        .brand-sub {
-            font-size: 14px;
-            color: #888;
-            margin: 5px 0 0 0;
-            letter-spacing: 1px;
-        }
-        p.desc {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #bbb;
-            margin-bottom: 20px;
-        }
-        .btn {
-            background: #dfb86c;
-            color: #000;
-            border: none;
-            padding: 14px 24px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            box-sizing: border-box;
-            box-shadow: 0 4px 15px rgba(223, 184, 108, 0.25);
-        }
-        .btn:active {
-            transform: scale(0.98);
-            background: #c5a15b;
-        }
-        .result-box {
-            margin-top: 24px;
-            padding: 18px;
-            border-radius: 12px;
-            background-color: #0f0f0f;
-            display: none;
-            text-align: left;
-            border: 1px dashed #dfb86c;
-            box-sizing: border-box;
-        }
-        .result-title {
-            margin: 0 0 12px 0;
-            color: #dfb86c;
-            font-size: 18px;
-            font-weight: bold;
-            border-bottom: 1px solid rgba(223, 184, 108, 0.2);
-            padding-bottom: 8px;
-        }
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 15px;
-        }
-        .result-row:last-of-type {
-            margin-bottom: 0;
-        }
-        .highlight {
-            color: #dfb86c;
-            font-weight: bold;
-        }
-        .btn-send {
-            background-color: #22c55e;
-            color: white;
-            margin-top: 15px;
-            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.25);
-        }
-        .btn-send:active {
-            background-color: #16a34a;
-        }
-        .footer-note {
-            font-size: 12px;
-            color: #666;
-            margin-top: 20px;
-            line-height: 1.4;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fdfdfb; color: #2c4c38; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .card { background: white; border-radius: 16px; padding: 30px; max-width: 400px; width: 100%; box-shadow: 0 10px 25px rgba(35,67,48,0.08); text-align: center; border: 1px solid #e1e8e4; }
+        h2 { margin-top: 0; color: #234330; font-size: 24px; }
+        p { font-size: 16px; line-height: 1.5; color: #53705e; }
+        .btn { background: #df6c4f; color: white; border: none; padding: 14px 28px; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; transition: 0.2s; width: 100%; margin-top: 15px; }
+        .btn:active { transform: scale(0.98); background: #c95c41; }
+        .result { margin-top: 25px; padding: 15px; border-radius: 8px; background: #f4f6f2; display: none; text-align: left; border: 1px dashed #c1d0c7; }
+        .result h3 { margin: 0 0 8px 0; color: #234330; font-size: 18px; }
+        .highlight { color: #df6c4f; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="card">
-        <div class="header">
-            <h1 class="brand-logo">星M 中壢海華店</h1>
-            <p class="brand-sub">外送距離試算</p>
-        </div>
-        <p class="desc">歡迎使用外送試算！請點選下方按鈕進行 GPS 手機定位，我們將為您算出專屬外送資格門檻。</p>
-        <button class="btn" onclick="startLocation()">📍 啟動 GPS 距離試算</button>
+        <h2>🛵 外送距離試算</h2>
+        <p>請點選下方按鈕，我們將快速為您估算外送杯數標準。</p>
+        <button class="btn" onclick="startLocation()">📍 點我試算 !</button>
         
-        <div id="resultBox" class="result-box">
-            <h3 class="result-title">🛵 試算結果</h3>
-            <div class="result-row">
-                <span>與門市距離：</span>
-                <span><span id="distVal" class="highlight">-</span> 公里</span>
-            </div>
-            <div class="result-row">
-                <span>外送方式：</span>
-                <span id="typeVal" class="highlight">-</span>
-            </div>
-            <div class="result-row">
-                <span>起送門檻：</span>
-                <span id="standardVal" class="highlight">-</span>
-            </div>
-            <button id="sendBtn" class="btn btn-send" style="display:none;" onclick="sendToChat()">💬 回傳到 LINE 聊天室</button>
+        <div id="resultBox" class="result">
+            <h3>試算結果：</h3>
+            <p>與店面距離：<span id="distVal" class="highlight">-</span> 公里</p>
+            <p>外送標準：<span id="standardVal" class="highlight">-</span></p>
+            <!-- 傳送按鈕 -->
+            <button id="sendBtn" class="btn" style="background:#234330; display:none;" onclick="sendToChat()">💬 回傳到聊天室</button>
         </div>
-        
-        <p class="footer-note">📢 遠程大單請提前一日預約。<br>午餐尖峰時段 (12:00-13:30) 車趟視現場單量彈性調整。</p>
     </div>
 
     <script>
-        // === 🔧 設定區（請在 LINE 開發者後台取得 LIFF ID 後填入此處）===
-        const MY_LIFF_ID = "2010743612-VDzR3yaa"; // 例如: "2006325985-AbCdeFG"
-        
-        // 店家座標 (桃園市中壢區六和路)
-        const STORE_LAT = 24.96307084;
-        const STORE_LNG = 121.22582394;
-        // ==========================================
+        // === 🔧 設定區（請務必填入您的 LIFF ID） ===
+        const MY_LIFF_ID = "2010743612-VDzR3yaa"; 
+        const STORE_LAT = 24.96307; // 店家經緯度
+        const STORE_LNG = 121.22582;
+        // ======================================
 
-        let calculatedDistance = 0;
         let finalMessage = "";
 
         // 初始化 LIFF
         liff.init({ liffId: MY_LIFF_ID })
-            .then(() => { console.log("LIFF 初始化成功"); })
-            .catch((err) => { console.error("LIFF 初始化失敗", err); });
+            .then(() => { console.log("LIFF 初始化成功"); });
 
         // 啟動定位
         function startLocation() {
-            if (!navigator.geolocation) {
-                alert("抱歉，您的手機不支援地理定位。");
-                return;
-            }
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const userLat = position.coords.latitude;
-                    const userLng = position.coords.longitude;
-                    
-                    // 用數學 Haversine 公式算出與店家的直線距離
-                    calculatedDistance = getDistance(STORE_LAT, STORE_LNG, userLat, userLng);
-                    showResult(calculatedDistance);
+                    const dist = getDistance(STORE_LAT, STORE_LNG, position.coords.latitude, position.coords.longitude);
+                    showResult(dist);
                 },
-                (error) => {
-                    alert("定位獲取失敗，請確認是否已允許 LINE 程式使用您的定位權限。");
-                },
-                { enableHighAccuracy: true, timeout: 10000 }
+                () => { alert("定位失敗，請確保權限已開啟。"); },
+                { enableHighAccuracy: true }
             );
         }
 
-        // 經緯度算直線公里公式
+        // 計算距離公式
         function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371; // 地球半徑 km
-            const dLat = (lat2-lat1) * Math.PI / 180;
-            const dLon = (lon2-lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return (R * c).toFixed(2);
+            const R = 6371;
+            const dLat = (lat2-lat1) * Math.PI/180;
+            const dLon = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+            return (R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))).toFixed(1);
         }
 
-        // 規則引擎：完美符合 S__66715718.jpg 菜單
-        function getRule(dist) {
-            const d = parseFloat(dist);
-            if (d <= 1.0) return { cups: 5, price: 300, type: "機車外送" };
-            if (d <= 2.0) return { cups: 8, price: 500, type: "機車外送" };
-            if (d <= 3.0) return { cups: 12, price: 750, type: "機車外送" };
-            if (d <= 4.0) return { cups: 15, price: 1000, type: "機車外送" };
-            if (d <= 5.0) return { cups: 20, price: 1300, type: "機車外送" };
-            if (d <= 6.0) return { cups: 25, price: 1650, type: "專車外送" };
-            if (d <= 7.0) return { cups: 30, price: 1950, type: "專車外送" };
-            if (d <= 8.0) return { cups: 38, price: 2450, type: "專車外送" };
-            if (d <= 9.0) return { cups: 45, price: 2900, type: "專車外送" };
-            if (d <= 10.0) return { cups: 55, price: 3600, type: "專車外送" };
-            return { error: "超出10公里範圍，請來電詢問外送詳情" };
-        }
-
-        // 顯示計算結果
+        // 顯示結果
         function showResult(dist) {
-            const resultBox = document.getElementById("resultBox");
-            const distVal = document.getElementById("distVal");
-            const typeVal = document.getElementById("typeVal");
-            const standardVal = document.getElementById("standardVal");
-            const sendBtn = document.getElementById("sendBtn");
-
-            distVal.innerText = dist;
-            const rule = getRule(dist);
-
-            if (rule.error) {
-                typeVal.innerText = "請來電詢問";
-                standardVal.innerText = "超出基本範圍，請來電詢問";
-                finalMessage = `🎯 星M 外送距離回報：\n我距離中壢海華店約 ${dist} 公里，超出了 10.0km 的基本外送範圍，我想直接來電詢問是否有外送車趟！`;
-            } else {
-                typeVal.innerText = rule.type;
-                standardVal.innerText = `滿 ${rule.cups} 杯 或 滿 $${rule.price}`;
-                finalMessage = `🎯 星M 外送距離回報：\n我距離中壢海華店約 ${dist} 公里。外送標準為：符合【${rule.type}】，起送門檻【滿 ${rule.cups} 杯 或 滿 $${rule.price}】。請確認我的訂單！`;
-            }
-
-            resultBox.style.display = "block";
-
-            // 只有在 LINE App 內開啟時，才會顯示回傳聊天室的按鈕
-            if (liff.isInClient()) {
-                sendBtn.style.display = "block";
-            }
+            document.getElementById("resultBox").style.display = "block";
+            document.getElementById("distVal").innerText = dist;
+            
+            let ruleText = "";
+            if (dist <= 1.0) ruleText = "滿 5 杯外送";
+            else if (dist <= 3.0) ruleText = "滿 8 杯外送";
+            else ruleText = "超出範圍，請來電詢問";
+            
+            document.getElementById("standardVal").innerText = ruleText;
+            finalMessage = `🎯 外送試算：距離 ${dist} 公里，符合【${ruleText}】。`;
+            
+            if (liff.isInClient()) document.getElementById("sendBtn").style.display = "block";
         }
 
-        // 將文字結果自動丟回 LINE 聊天室，並自動關閉小網頁
+        // 關鍵：將結果傳送並觸發自動回應 (傳送兩則訊息)
         function sendToChat() {
-            liff.sendMessages([{ type: 'text', text: finalMessage }])
-                .then(() => { liff.closeWindow(); })
-                .catch((err) => { alert("訊息傳送失敗：" + err); });
+            liff.sendMessages([
+                { type: 'text', text: finalMessage }, // 第一則：試算結果
+                { type: 'text', text: "確認外送標準" }   // 第二則：觸發 LINE OA 自動回應的關鍵字
+            ])
+            .then(() => { liff.closeWindow(); })
+            .catch((err) => { alert("傳送失敗：" + err); });
         }
     </script>
 </body>
 </html>
-                    
