@@ -355,12 +355,9 @@ async function reverseGeocode(lat, lng){
 
     const json = await response.json();
 
-    console.log("Geocode:", json);
+    alert(JSON.stringify(json));
 
-    if(
-        json.results &&
-        json.results.length > 0
-    ){
+    if(json.results && json.results.length > 0){
         return json.results[0].formatted_address;
     }
 
