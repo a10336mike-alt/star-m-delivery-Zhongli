@@ -563,7 +563,10 @@ async function startLocation(){
 			
 			// GPS → 地址
 			const address = await reverseGeocode(lat, lng);
-			
+			console.log("GPS:", lat, lng);
+			console.log("Address:", address);
+			console.log("Google Place:", place);
+				
 			// 地址 → Google 官方座標
 			const place = await geocodeAddress(address);
 			
