@@ -265,11 +265,11 @@ function buildTable(distance){
         }
         tr.innerHTML=`
         <td>
-                ${
+          ${
         rule.max === 1000
-        ? "0~1 km"
-        : `${((rule.max-900)/1000).toFixed(1)}~${rule.max/1000} km`
-    }
+        ? "0.0~1.0 km"
+        : `${((rule.max - 900) / 1000).toFixed(1)}~${(rule.max / 1000).toFixed(1)} km`
+           }
         </td>
         <td>
             ${rule.cup} 杯 / $${rule.money}
