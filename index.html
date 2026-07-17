@@ -6,7 +6,6 @@
       content="width=device-width,initial-scale=1.0">
 <title>星M 外送門檻試算</title>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPtYdWKJtn3prltPDlMayZJBylyYgOJwY&libraries=places"></script>
 <style>
 *{
     margin:0;
@@ -308,43 +307,10 @@ const RULES=[
 //==============================
 // LIFF 初始化
 //==============================
-let autocomplete;
-let selectedPlace = null;
-
 window.onload=async()=>{
     try{
-        await liff.init({
-            liffId:LIFF_ID
-        });
-
-        autocomplete = new google.maps.places.Autocomplete(
-            document.getElementById("addressInput"),
-            {
-                componentRestrictions:{country:"tw"},
-                fields:["geometry","formatted_address"],
-                types:["geocode"]
-            }
-        );
-		autocomplete.addListener("place_changed", () => {
-
-    const place = autocomplete.getPlace();
-
-    if (place && place.geometry) {
-        selectedPlace = {
-            lat: place.geometry.location.lat(),
-            lng: place.geometry.location.lng(),
-            address: place.formatted_address
-        };
-    } else {
-        selectedPlace = null;
-    }
-
-});
-document.getElementById("addressInput").addEventListener("input", () => {
-    selectedPlace = null;
-});
-    }
-    catch(e){
+        await liff.init({liffId:LIFF_ID});
+    }catch(e){
         console.log(e);
     }
 };
@@ -466,6 +432,22 @@ async function getRoadDistance(
     }
     return json.routes[0].distanceMeters;
 }
+
+//==============================
+// 地址轉經緯度
+//==============================
+async function geocodeAddress(address){
+    const response=await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&language=zh-TW&key=${GOOGLE_API_KEY}`);
+    if(!response.ok) throw new Error("Geocode Error");
+    const json=await response.json();
+    if(json.status!=="OK"||!json.results.length) throw new Error("Address Not Found");
+    return {
+        lat:json.results[0].geometry.location.lat,
+        lng:json.results[0].geometry.location.lng,
+        address:json.results[0].formatted_address
+    };
+}
+
 //==============================
 // 反向地理編碼
 //==============================
@@ -632,13 +614,7 @@ loading(true);
 
         }
 
-		if (!selectedPlace) {
-			alert("請先從下拉選單選擇地址");
-			loading(false);
-			return;
-		}
-
-const place = selectedPlace;
+		const place = await geocodeAddress(keyword);
 
         let vehicle = "機車";
 
@@ -689,10 +665,6 @@ document
 
         const box = document.getElementById("addressBox");
 
-
-		selectedPlace = null;
-		document.getElementById("addressInput").value = "";
-		
         if(this.value === "address"){
 
             box.style.display = "block";
