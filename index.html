@@ -430,6 +430,8 @@ async function getRoadDistance(
             "No Route"
         );
     }
+	console.log("Mode:", travelMode);//for debug
+	console.log(json);               //for debug
     return json.routes[0].distanceMeters;
 }
 
