@@ -24,7 +24,7 @@ body{
     margin:auto;
     background:white;
     border-radius:18px;
-    box-shadow:
+    box-shadow:F
     0 8px 25px
     rgba(0,0,0,.1);
     padding:30px;
@@ -568,7 +568,10 @@ setTimeout(() => {
         window.pageYOffset -
         20;
 
-    window.scrollTo(0, targetTop);
+    window.scrollTo({
+        top: targetTop,
+        behavior: "smooth"
+    });
 }, 300);
 	
 }
