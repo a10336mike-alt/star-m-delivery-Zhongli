@@ -50,61 +50,54 @@ h1{
 
     margin-bottom:15px;
 
-    text-align:left;
+    text-align:center;
 
 }
 
 .mode-title{
-
-    font-weight:bold;
-
-    margin-bottom:12px;
-
-    font-size:18px;
-
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:20px;
+    text-align:center;
 }
 
 .radio-item{
-
-    display:block;
-
-    margin:10px 0;
-
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    font-size:22px;
+    margin:18px 0;
 }
 
 #addressBox{
-
+    text-align:center;
     margin-top:15px;
-
 }
 
 #addressInput{
-
-    width:100%;
-
-    padding:12px;
-
-    font-size:16px;
-
-    border:1px solid #ccc;
-
-    border-radius:8px;
-
-    box-sizing:border-box;
-
-} 
+    width:70%;
+    max-width:420px;
+}
 
 .query-right{
-    width:180px;
-    flex-shrink:0;
+    text-align:center;
+    margin-top:25px;
 }
 
 .query-right img{
-    width:100%;
-    display:block;
-    height:auto;
-}
+    width:260px;
+    height:150px;
+    object-fit:cover;
 
+    border-radius:24px;
+
+    display:inline-block;
+
+    border:4px solid #ffffff;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.15);
+}
 	
 button{
     width:100%;
@@ -235,16 +228,12 @@ button:disabled{
                 id="addressInput"
                 type="text"
                 placeholder="例如：中壢SOGO、A18高鐵站">
-
         </div>
-
+    </div>
         <!-- 新品圖片放這 -->
         <div class="query-right">
             <img src="starm.png">
         </div>
-
-    </div>
-
 </div>
     <button
         id="calcBtn"
