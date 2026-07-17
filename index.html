@@ -402,7 +402,8 @@ async function getRoadDistance(
                 }
             }
         },
-        travelMode: travelMode
+        travelMode: travelMode,
+        computeAlternativeRoutes: true
     };
 
     // 汽車模式才加 routingPreference
@@ -417,7 +418,7 @@ async function getRoadDistance(
             headers:{
                 "Content-Type":"application/json",
                 "X-Goog-Api-Key":GOOGLE_API_KEY,
-                "X-Goog-FieldMask":"routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline"
+                "X-Goog-FieldMask":"routes.distanceMeters,routes.duration"
             },
             body: JSON.stringify(body)
         }
