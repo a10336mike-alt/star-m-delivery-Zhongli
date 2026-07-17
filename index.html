@@ -131,10 +131,12 @@ button:disabled{
 }
 #result{
     display:none;
-    margin-top:25px;
-    background:#f7fafc;
-    border-radius:12px;
+    background:#f8f8f8;
+    border-radius:16px;
     padding:20px;
+    margin-top:20px;
+
+    scroll-margin-top:20px;
 }
 .item{
     margin-bottom:18px;
@@ -531,27 +533,39 @@ function showResult(
     distance
 ){
     const rule=getRule(distance);
-	const finalVehicle = needCar(distance, rule) ? "汽車" : "機車";
+    const finalVehicle = needCar(distance, rule) ? "汽車" : "機車";
+
     document.getElementById("result").style.display="block";
+
     document.getElementById("address").textContent=
         address;
+
     document.getElementById("distance").textContent=
         (distance/1000).toFixed(2)+" km";
+
     if(rule){
         document.getElementById("vehicle").textContent =
-    finalVehicle === "汽車"
-        ? "🚗 豪華專車外送"
-        : "🛵 gogoro外送";
+            finalVehicle === "汽車"
+                ? "🚗 豪華專車外送"
+                : "🛵 gogoro外送";
+
         document.getElementById("minimum").textContent=
             `${rule.cup} 杯 或 $${rule.money}`;
     }
     else{
-        document.getElementById("vehicle").textContent=
-            "-";
-        document.getElementById("minimum").textContent=
-            "請來電詢問";
+        document.getElementById("vehicle").textContent="-";
+        document.getElementById("minimum").textContent="請來電詢問";
     }
+
     buildTable(distance);
+
+    // ⭐ 新增這段
+    setTimeout(() => {
+        document.getElementById("result").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }, 100);
 }
 //==============================
 // API Key 檢查
