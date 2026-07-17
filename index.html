@@ -6,6 +6,7 @@
       content="width=device-width,initial-scale=1.0">
 <title>星M 外送門檻試算</title>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPtYdWKJtn3prltPDlMayZJBylyYgOJwY&libraries=places"></script>
 <style>
 *{
     margin:0;
@@ -177,7 +178,6 @@ button:disabled{
             }
         }
     </style>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPtYdWKJtn3prltPDlMayZJBylyYgOJwY&libraries=places"></script>
 </head>
 <body>
 <div class="card">
@@ -212,7 +212,7 @@ button:disabled{
     <div id="addressBox" style="display:none;">
 
         <input
-            id="autocomplete"
+            id="addressInput"
             type="text"
             placeholder="例如：中壢SOGO、A18高鐵站">
 
@@ -308,16 +308,45 @@ const RULES=[
 //==============================
 // LIFF 初始化
 //==============================
+let autocomplete;
+let selectedPlace = null;
+
 window.onload=async()=>{
     try{
         await liff.init({
             liffId:LIFF_ID
         });
+
+        autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById("addressInput"),
+            {
+                componentRestrictions:{country:"tw"},
+                fields:["geometry","formatted_address"],
+                types:["geocode"]
+            }
+        );
+		autocomplete.addListener("place_changed", () => {
+
+    const place = autocomplete.getPlace();
+
+    if (place && place.geometry) {
+        selectedPlace = {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+            address: place.formatted_address
+        };
+    } else {
+        selectedPlace = null;
+    }
+
+});
+
     }
     catch(e){
         console.log(e);
     }
 };
+
 //==============================
 // Loading
 //==============================
@@ -459,22 +488,7 @@ async function reverseGeocode(
     }
     return "未知位置";
 }
-//==============================
-// 地址 -> 經緯度
-//==============================
-let selectedPlace=null;
-window.addEventListener("load",()=>{
- const input=document.getElementById("autocomplete");
- if(!input||!window.google)return;
- const ac=new google.maps.places.Autocomplete(input,{fields:["geometry","formatted_address"],componentRestrictions:{country:"tw"}});
- ac.addListener("place_changed",()=>{
-   const p=ac.getPlace();
-   if(p.geometry){
-     selectedPlace={lat:p.geometry.location.lat(),lng:p.geometry.location.lng(),address:p.formatted_address};
-   }
- });
-});
-
+     
 //==============================
 // 顯示結果
 //==============================
@@ -616,8 +630,13 @@ showResult(
 
         }
 
-        if(!selectedPlace){throw new Error("請從下拉選單選擇地址");}
-        const place=selectedPlace;
+		if (!selectedPlace) {
+			alert("請先從下拉選單選擇地址");
+			loading(false);
+			return;
+		}
+
+const place = selectedPlace;
 
         let vehicle = "機車";
 
