@@ -92,7 +92,29 @@ h1{
 
     box-sizing:border-box;
 
-}      
+} 
+	.query-layout{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.query-left{
+    flex:1;
+}
+
+.query-right{
+    width:180px;
+    flex-shrink:0;
+}
+
+.query-right img{
+    width:100%;
+    display:block;
+    height:auto;
+}
+
+	
 button{
     width:100%;
     border:0;
@@ -175,6 +197,15 @@ button:disabled{
             .value{
                 font-size:20px;
             }
+			.query-layout{
+    flex-direction:column;
+    align-items:center;
+}
+
+.query-right{
+    width:180px;
+    margin-top:15px;
+}
         }
     </style>
 </head>
@@ -185,8 +216,9 @@ button:disabled{
         依照您的 GPS 定位<br>
         使用 Google 道路距離計算外送門檻
     </div>
-      <div class="mode-box">
-
+	
+    <div class="mode-box">
+		<div class="query-layout">
     <div class="mode-title">
         📍 選擇查詢方式
     </div>
@@ -216,6 +248,11 @@ button:disabled{
             placeholder="例如：中壢SOGO、A18高鐵站">
 
     </div>
+			<div class="query-right">
+    <img src="starm.png" alt="新品">
+</div>
+
+</div>
 
 </div>
     <button
