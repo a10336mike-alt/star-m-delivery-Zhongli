@@ -576,6 +576,27 @@ showResult(
         }
     );
 }
+document
+.querySelectorAll("input[name='mode']")
+.forEach(item => {
+
+    item.addEventListener("change", function(){
+
+        const box = document.getElementById("addressBox");
+
+        if(this.value === "address"){
+
+            box.style.display = "block";
+
+        }else{
+
+            box.style.display = "none";
+
+        }
+
+    });
+
+});      
 </script>
 </body>
 </html>
