@@ -93,15 +93,6 @@ h1{
     box-sizing:border-box;
 
 } 
-	.query-layout{
-    display:flex;
-    align-items:center;
-    gap:20px;
-}
-
-.query-left{
-    flex:1;
-}
 
 .query-right{
     width:180px;
@@ -197,10 +188,7 @@ button:disabled{
             .value{
                 font-size:20px;
             }
-			.query-layout{
-    flex-direction:column;
-    align-items:center;
-}
+	
 
 .query-right{
     width:180px;
@@ -212,49 +200,50 @@ button:disabled{
 <body>
 <div class="card">
     <h1>🧋 星M 外送門檻試算</h1>
+
     <div class="sub">
         依照您的 GPS 定位<br>
         使用 Google 道路距離計算外送門檻
     </div>
-	
+
     <div class="mode-box">
-		<div class="query-layout">
-			<div class="query-left">
-    <div class="mode-title">
-        📍 選擇查詢方式
+
+        <div class="mode-title">
+            📍 選擇查詢方式
+        </div>
+
+        <label class="radio-item">
+            <input
+                type="radio"
+                name="mode"
+                value="gps"
+                checked>
+            使用目前位置（GPS）
+        </label>
+
+        <label class="radio-item">
+            <input
+                type="radio"
+                name="mode"
+                value="address">
+            輸入地址／地標
+        </label>
+
+        <div id="addressBox" style="display:none;">
+
+            <input
+                id="addressInput"
+                type="text"
+                placeholder="例如：中壢SOGO、A18高鐵站">
+
+        </div>
+
+        <!-- 新品圖片放這 -->
+        <div class="query-right">
+            <img src="starm.png">
+        </div>
+
     </div>
-
-    <label class="radio-item">
-        <input
-            type="radio"
-            name="mode"
-            value="gps"
-            checked>
-        使用目前位置（GPS）
-    </label>
-
-    <label class="radio-item">
-        <input
-            type="radio"
-            name="mode"
-            value="address">
-        輸入地址／地標
-    </label>
-
-    <div id="addressBox" style="display:none;">
-
-        <input
-            id="addressInput"
-            type="text"
-            placeholder="例如：中壢SOGO、A18高鐵站">
-
-    </div>
-				</div>
-			<div class="query-right">
-    <img src="starm.png">
-</div>
-
-</div>
 
 </div>
     <button
