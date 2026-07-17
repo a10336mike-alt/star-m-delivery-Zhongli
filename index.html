@@ -418,7 +418,7 @@ async function getRoadDistance(
             headers:{
                 "Content-Type":"application/json",
                 "X-Goog-Api-Key":GOOGLE_API_KEY,
-                "X-Goog-FieldMask":"routes.distanceMeters,routes.duration,routes.routeLabels"
+                "X-Goog-FieldMask":"routes.distanceMeters,routes.duration,routes.routeLabels,routes.polyline.encodedPolyline"
             },
             body: JSON.stringify(body)
         }
@@ -430,13 +430,21 @@ async function getRoadDistance(
 
     const json = await response.json();
 
-    console.log("==========");
-    console.log("Mode:", travelMode);
-    console.log(json);
-
-    if(!json.routes || json.routes.length === 0){
-        throw new Error("No Route");
-    }
+	console.log("==========");
+	console.log("Mode:", travelMode);
+	
+	json.routes.forEach((r, i) => {
+	    console.log(
+	        i,
+	        r.distanceMeters,
+	        r.routeLabels,
+	        r.polyline.encodedPolyline
+	    );
+	});
+	
+	if (!json.routes || json.routes.length === 0) {
+	    throw new Error("No Route");
+	}
 
     return json.routes[0].distanceMeters;
 }
