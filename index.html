@@ -265,12 +265,12 @@ function buildTable(distance){
         }
         tr.innerHTML=`
         <td>
-          ${
+    ${
         rule.max === 1000
         ? "0.0~1.0 km"
         : `${((rule.max - 900) / 1000).toFixed(1)}~${(rule.max / 1000).toFixed(1)} km`
-           }
-        </td>
+    }
+</td>
         <td>
             ${rule.cup} 杯 / $${rule.money}
         </td>
@@ -351,34 +351,26 @@ async function getRoadDistance(
 //==============================
 // 反向地理編碼
 //==============================
-async function reverseGeocode(lat, lng){
-
-    try{
-
-        alert("開始反查");
-
-        const response = await fetch(
+async function reverseGeocode(
+    lat,
+    lng
+){
+    const response=
+        await fetch(
             `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&language=zh-TW&key=${GOOGLE_API_KEY}`
         );
-
-        alert("HTTP：" + response.status);
-
-        const json = await response.json();
-
-        alert(JSON.stringify(json));
-
-        if(json.results && json.results.length > 0){
-            return json.results[0].formatted_address;
-        }
-
-        return "未知位置";
-
-    }catch(e){
-
-        alert("Geocode Error：" + e.message);
-
+    if(!response.ok){
         return "未知位置";
     }
+    const json=
+        await response.json();
+    if(
+        json.results &&
+        json.results.length>0
+    ){
+        return json.results[0].formatted_address;
+    }
+    return "未知位置";
 }
 //==============================
 // 顯示結果
