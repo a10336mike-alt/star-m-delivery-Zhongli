@@ -221,6 +221,8 @@ button:disabled{
     opacity:0;
     visibility:hidden;
 
+    pointer-events:none;   /* ⭐ 加這行 */
+
     transition:.25s;
 
     z-index:9999;
@@ -229,6 +231,7 @@ button:disabled{
 #toast.show{
     opacity:1;
     visibility:visible;
+    pointer-events:auto;   /* ⭐ 加這行 */
 }
 
 .toast-box{
