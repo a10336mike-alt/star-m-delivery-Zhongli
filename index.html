@@ -647,11 +647,7 @@ setTimeout(() => {
 async function sendResultToChat(){
 
 await liff.ready;	
-alert(
-`isInClient = ${liff.isInClient()}
-sendMessages = ${liff.isApiAvailable("sendMessages")}
-OS = ${liff.getOS()}`
-);
+
 	
     const address =
         document.getElementById("address").textContent.trim();
