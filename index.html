@@ -646,6 +646,12 @@ setTimeout(() => {
 //==============================	
 async function sendResultToChat(){
 
+alert(
+`isInClient = ${liff.isInClient()}
+sendMessages = ${liff.isApiAvailable("sendMessages")}
+OS = ${liff.getOS()}`
+);
+	
     const address =
         document.getElementById("address").textContent.trim();
 
@@ -691,10 +697,12 @@ async function sendResultToChat(){
 
 }
 catch(error){
+    console.error("sendMessages error:", error);
 
-    console.error(error);
-
-    alert("❌ 傳送失敗，請稍後再試");
+    alert(
+        "code：" + (error.code || "無") + "\n" +
+        "message：" + (error.message || JSON.stringify(error))
+    );
 
 }
 }
