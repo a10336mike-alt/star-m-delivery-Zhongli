@@ -681,11 +681,28 @@ alert("有進入 sendResultToChat");
         return;
     }
 
-    if(!liff.isApiAvailable("sendMessages")){
-        alert("目前無法回傳訊息，請從原聊天室重新開啟");
-        return;
-    }
+    try{
 
+    await liff.sendMessages([
+        {
+            type:"text",
+            text:message
+        }
+    ]);
+
+    showToast();
+
+}
+catch(error){
+
+    console.error(error);
+
+    alert(
+        "code：" + (error.code || "") +
+        "\nmessage：" + (error.message || "")
+    );
+
+}
     await liff.sendMessages([
         {
             type:"text",
