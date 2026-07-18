@@ -649,9 +649,8 @@ setTimeout(() => {
 //==============================	
 async function sendResultToChat(){
 
-await liff.ready;	
-alert("有進入 sendResultToChat");
-	
+    await liff.ready;
+
     const address =
         document.getElementById("address").textContent.trim();
 
@@ -669,62 +668,38 @@ alert("有進入 sendResultToChat");
 
 📍 位置：${address}
 📏 道路距離：${distance}
-🛵 配送方式：${vehicle}
+🚚 配送方式：${vehicle}
 🥤 外送門檻：${minimum}
 
 星M 中壢海華店`;
 
-   try{
-
-    if(!liff.isInClient()){
-        alert("請從 LINE 聊天室中開啟此頁面，才能回傳結果");
-        return;
-    }
-
     try{
 
-    await liff.sendMessages([
-        {
-            type:"text",
-            text:message
+        if(!liff.isInClient()){
+            alert("請從手機 LINE 聊天室中開啟此頁面");
+            return;
         }
-    ]);
 
-    showToast();
+        await liff.sendMessages([
+            {
+                type: "text",
+                text: message
+            }
+        ]);
 
+        showToast();
+
+    }
+    catch(error){
+
+        console.error("sendMessages error:", error);
+
+        alert(
+            "code：" + (error.code || "無") + "\n" +
+            "message：" + (error.message || JSON.stringify(error))
+        );
+    }
 }
-catch(error){
-
-    console.error(error);
-
-    alert(
-        "code：" + (error.code || "") +
-        "\nmessage：" + (error.message || "")
-    );
-
-}
-    await liff.sendMessages([
-        {
-            type:"text",
-            text:message
-        }
-    ]);
-
-    showToast();
-
-}
-catch(error){
-    console.error("sendMessages error:", error);
-
-    alert(
-        "code：" + (error.code || "無") + "\n" +
-        "message：" + (error.message || JSON.stringify(error))
-    );
-
-}
-}
-
-
 	
 //==============================
 // API Key 檢查
