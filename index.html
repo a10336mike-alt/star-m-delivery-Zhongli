@@ -116,6 +116,14 @@ button{
     background:#00a884;
     cursor:pointer;
 }
+.send-result-btn{
+    margin-top:20px;
+    background:#06C755;
+}
+
+.send-result-btn:hover{
+    background:#05a848;
+}	
 button:hover{
     background:#00916f;
 }
@@ -198,7 +206,58 @@ button:disabled{
     height:auto;
 }
         }
-    </style>
+/* ===== 成功提示 ===== */
+
+#toast{
+    position:fixed;
+    inset:0;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(0,0,0,.35);
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:.25s;
+
+    z-index:9999;
+}
+
+#toast.show{
+    opacity:1;
+    visibility:visible;
+}
+
+.toast-box{
+    transform:scale(.9);
+    transition:.25s;
+}
+
+#toast.show .toast-box{
+    transform:scale(1);
+}
+
+.toast-icon{
+    font-size:52px;
+    margin-bottom:10px;
+}
+
+.toast-title{
+    font-size:22px;
+    font-weight:bold;
+    color:#06C755;
+}
+
+.toast-sub{
+    margin-top:8px;
+    font-size:15px;
+    color:#666;
+}
+	
+</style>
 </head>
 <body>
 <div class="card">
@@ -299,6 +358,12 @@ button:disabled{
             <tbody id="ruleBody">
             </tbody>
         </table>
+		<button
+		    id="sendResultBtn"
+		    class="send-result-btn"
+		    onclick="sendResultToChat()">
+		    💬 傳送到聊天室
+		</button>
     </div>
 </div>
 <script>
@@ -575,6 +640,67 @@ setTimeout(() => {
 }, 300);
 	
 }
+
+//==============================
+// 回傳結果到聊天室
+//==============================	
+async function sendResultToChat(){
+
+    const address =
+        document.getElementById("address").textContent.trim();
+
+    const distance =
+        document.getElementById("distance").textContent.trim();
+
+    const vehicle =
+        document.getElementById("vehicle").textContent.trim();
+
+    const minimum =
+        document.getElementById("minimum").textContent.trim();
+
+    const message =
+`🧋 星M 外送門檻試算結果
+
+📍 位置：${address}
+📏 道路距離：${distance}
+🛵 配送方式：${vehicle}
+🥤 外送門檻：${minimum}
+
+星M 中壢海華店`;
+
+   try{
+
+    if(!liff.isInClient()){
+        alert("請從 LINE 聊天室中開啟此頁面，才能回傳結果");
+        return;
+    }
+
+    if(!liff.isApiAvailable("sendMessages")){
+        alert("目前無法回傳訊息，請從原聊天室重新開啟");
+        return;
+    }
+
+    await liff.sendMessages([
+        {
+            type:"text",
+            text:message
+        }
+    ]);
+
+    showToast();
+
+}
+catch(error){
+
+    console.error(error);
+
+    alert("❌ 傳送失敗，請稍後再試");
+
+}
+}
+
+
+	
 //==============================
 // API Key 檢查
 //==============================
@@ -593,6 +719,22 @@ function checkConfig(){
     }
     return true;
 }
+
+//==============================
+// 回傳成功 關閉視窗
+//==============================	
+function showToast(){
+
+    const toast=document.getElementById("toast");
+
+    toast.classList.add("show");
+
+    setTimeout(()=>{
+        liff.closeWindow();
+    },800);
+
+}
+	
 //==============================
 // 重新包裝入口
 //==============================
@@ -750,5 +892,12 @@ document
 
 });      
 </script>
+	<div id="toast">
+    <div class="toast-box">
+        <div class="toast-icon">✅</div>
+        <div class="toast-title">已傳送到聊天室</div>
+        <div class="toast-sub">即將返回 LINE...</div>
+    </div>
+</div>
 </body>
 </html>
