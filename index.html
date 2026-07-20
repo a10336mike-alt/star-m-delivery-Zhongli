@@ -375,6 +375,7 @@ button:disabled{
 //==============================
 const LIFF_ID = "2010743612-VDzR3yaa";
 const GOOGLE_API_KEY = "AIzaSyCPtYdWKJtn3prltPDlMayZJBylyYgOJwY";
+const LOG_API_URL = "https://script.google.com/macros/s/AKfycbxhZuJIAUjgXFOV_--cySIgFajCulcJhIal0YfuzdVFsBLT0r6JA2F0l_yDqU2sCg12/exec";
 const SHOP = {
     lat:24.963070,
     lng:121.225820
@@ -781,11 +782,76 @@ async function startLocation(){
 		    distance = await getRoadDistance(place.lat, place.lng, "DRIVE");
 		    vehicle = "汽車";
 		}
+//==============================
+// 記錄查詢結果
+//==============================
+async function saveQueryLog({
+    gps,
+    address,
+    distance,
+    minimum
+}) {
+    let lineUserId = "";
+    let lineName = "";
 
+    try {
+        if (
+            typeof liff !== "undefined" &&
+            liff.isLoggedIn()
+        ) {
+            const profile = await liff.getProfile();
+
+            lineUserId = profile.userId || "";
+            lineName = profile.displayName || "";
+        }
+    } catch (error) {
+        console.log("無法取得 LINE 個人資料：", error);
+    }
+
+    const data = {
+        lineUserId: lineUserId,
+        lineName: lineName,
+        gps: gps,
+        address: address,
+        distance: distance,
+        minimum: minimum
+    };
+
+    try {
+        await fetch(LOG_API_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8"
+            },
+            body: JSON.stringify(data)
+        });
+
+        console.log("查詢紀錄已送出");
+
+    } catch (error) {
+        // 紀錄失敗不能影響正常試算
+        console.error("查詢紀錄失敗：", error);
+    }
+}
+//==============================
+// 顯示查詢結果
+//==============================			
 showResult(
     address,
     distance
 );
+const finalRule = getRule(distance);
+
+await saveQueryLog({
+    gps: `${lat},${lng}`,
+    address: address,
+    distance: (distance/1000).toFixed(2) + " km",
+    minimum: finalRule
+        ? `${finalRule.cup} 杯 或 $${finalRule.money}`
+        : "請來電詢問"
+});
+				
             }
             catch(e){
                 console.error(e);
@@ -856,6 +922,16 @@ loading(true);
             place.address,
             distance
         );
+		const finalRule = getRule(distance);
+
+await saveQueryLog({
+    gps: `${place.lat},${place.lng}`,
+    address: place.address,
+    distance: (distance/1000).toFixed(2) + " km",
+    minimum: finalRule
+        ? `${finalRule.cup} 杯 或 $${finalRule.money}`
+        : "請來電詢問"
+});
 
     }catch(e){
 
